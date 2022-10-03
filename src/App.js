@@ -1,44 +1,46 @@
-import React, {useState}  from 'react';
+import React, {useState, useEffect}  from 'react';
 
 import Expenses from './components/Expenses/Expenses';
 
 import NewExpense from './components/NewExpense/NewExpense';
 
-let DUMMY_EXPENSE = [
-    {
-        id: 'e1',
-        title: 'College Fees',
-        amount: 97000,
-        date: new Date(2022, 8, 10)
-    },
-    {
-        id: 'e2',
-        title: 'Hostel Fees',
-        amount: 80000,
-        date: new Date(2022, 19, 10)
-    },
-    {
-        id: 'e3',
-        title: 'Stationary',
-        amount: 2000,
-        date: new Date(2022, 10, 7)
-    },
-    {
-        id: 'e4',
-        title: 'Clothings',
-        amount: 3000,
-        date: new Date(2022, 8, 10)
-    }
-];
+let DUMMY_EXPENSE = [];
 
 const App = () => {
     const [expenses, setExpenses] = useState(DUMMY_EXPENSE);
+
+    function fetchData(){
+        fetch('http://localhost/sample-api/api/read.php').then(  //need to be edited
+        response => {
+            return response.json();
+            }
+        ).then(
+        data => {
+            //console.log(data);
+            setExpenses(data);
+            }
+        );
+    }
+
+
+    useEffect(()=>{
+        fetchData();
+    }, []);
+    
     
 
     const addExpenseHandler = (expense) => {
-
-        const updatedExpense = [expense, ...expenses];
-        setExpenses(updatedExpense);
+        fetch('http://localhost/sample-api/api/read.php',{  //api key has to be changed
+            method: 'POST',
+            body: JSON.stringify(expense),
+            headers: {
+                "content-Type" : 'application/json'
+            }
+        }).then(
+            response => {
+                fetchData();
+            }
+        );
     }
 
 
